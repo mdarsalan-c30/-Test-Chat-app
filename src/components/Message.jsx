@@ -26,6 +26,11 @@
 // }
 //         </div>
 
+
+//     </div>
+//   )
+// }
+
 import React, { useContext, useEffect, useRef } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { ChatContext } from '../context/ChatContext';
@@ -43,11 +48,25 @@ export default function Message({ message }) {
 
   // Function to format timestamp
   const formatTime = (timestamp) => {
-    const date = new Date(timestamp);
+    let date;
+
+    // If the timestamp is a number, assume it's a Unix timestamp in milliseconds
+    if (typeof timestamp === 'number') {
+      date = new Date(timestamp);
+    } 
+    // If the timestamp is a string, assume it's an ISO string
+    else if (typeof timestamp === 'string') {
+      date = new Date(timestamp);
+    } 
+    // Handle any other cases (e.g., invalid formats)
+    else {
+      console.error("Invalid timestamp format:", timestamp);
+      return "Invalid date";
+    }
 
     // Check if the date is valid
     if (isNaN(date.getTime())) {
-      console.error("Invalid date format:", timestamp);
+      console.error("Invalid date:", timestamp);
       return "Invalid date";
     }
 
@@ -60,7 +79,7 @@ export default function Message({ message }) {
     <div ref={ref} className={`message ${message.senderId === currentUser.uid && "owner"}`}>
       <div className="messageinfo">
         <img src={message.senderId === currentUser.uid ? currentUser.photoURL : data.user.photoURL} alt="" />
-        <span>{formatTime(message.timestamp)}</span>
+        <span>{formatTime(message.timestamp)}</span> {/* Use the formatTime function here */}
       </div>
       <div className="messagecontent">
         <p>{message.text}</p>
@@ -70,8 +89,3 @@ export default function Message({ message }) {
   );
 }
 
-        
-      
-//     </div>
-//   )
-// }
